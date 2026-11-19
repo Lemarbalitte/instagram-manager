@@ -1,0 +1,477 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#111827">
+<title>Mes contenus Instagram</title>
+<style>
+:root{color-scheme:dark;--bg:#0b0e14;--card:#151a24;--ink:#eef1f8;--muted:#9aa4b5;--line:#2a3140;--accent:#a18aff;--soft:#29233f;--green:#48c99a}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;color:var(--ink)}
+header{background:#090c12;color:#fff;padding:22px 18px 20px;border-radius:0 0 24px 24px}
+.top{max-width:760px;margin:auto}.eyebrow{font-size:11px;letter-spacing:1.8px;color:#b9b1ff;font-weight:800;text-transform:uppercase}
+h1{font-size:24px;margin:7px 0 5px}.sub{font-size:13px;color:#c4c9d4;margin:0}
+main{max-width:760px;margin:0 auto;padding:16px 14px 40px}
+.actions{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:14px}
+button,.filebtn{border:0;border-radius:13px;padding:13px 12px;font-size:13px;font-weight:750;cursor:pointer}
+.primary{background:var(--accent);color:white}.secondary{background:#1b2230;color:#e8ebf4;border:1px solid var(--line)}
+.filebtn{display:flex;align-items:center;justify-content:center;background:#1b2230;border:1px solid var(--line);color:#e8ebf4}
+input[type=file]{display:none}
+.search{width:100%;border:1px solid var(--line);border-radius:13px;padding:14px 15px;font-size:14px;background:#151a24;color:var(--ink);outline:none;margin-bottom:13px}
+.notice{font-size:11px;color:var(--muted);line-height:1.5;margin:0 2px 14px}
+.list{display:grid;gap:10px}
+.usercard{background:var(--card);border:1px solid var(--line);border-radius:17px;padding:15px;display:flex;align-items:center;gap:12px;box-shadow:0 3px 12px #1b25400a}
+.avatar{width:43px;height:43px;border-radius:14px;background:var(--soft);color:var(--accent);display:grid;place-items:center;font-weight:900;font-size:18px;flex-shrink:0}
+.userinfo{min-width:0;flex:1}.username{font-size:15px;font-weight:850;overflow-wrap:anywhere}.meta{font-size:11px;color:var(--muted);margin-top:4px}
+.openbtn{background:var(--soft);color:var(--accent);padding:10px 13px;white-space:nowrap}
+.empty{text-align:center;padding:35px 15px;color:var(--muted);background:var(--card);border:1px dashed var(--line);border-radius:17px;font-size:13px}
+.panel{display:none;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px;margin-bottom:14px}
+.panel.show{display:block}.panelhead{display:flex;align-items:center;gap:10px;margin-bottom:13px}
+.back{background:#252c3a;color:#e8ebf4;padding:9px 12px}.paneltitle{font-weight:850;font-size:18px;flex:1;overflow-wrap:anywhere}
+.copyall{width:100%;background:#171e30;color:#fff;margin-bottom:13px}
+.field{background:#111722;border:1px solid var(--line);border-radius:13px;padding:12px;margin-bottom:9px}
+.fieldtop{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:7px}
+.label{font-size:11px;font-weight:850;color:var(--muted);letter-spacing:.7px;text-transform:uppercase}
+.copyone{padding:7px 10px;background:var(--soft);color:var(--accent);font-size:11px}
+.value{font-size:14px;line-height:1.5;white-space:pre-wrap;overflow-wrap:anywhere;min-height:18px}
+.cta-value{cursor:pointer;border:1px dashed #7763c9;border-radius:9px;padding:10px;background:#211d32;color:#eee8ff}.cta-hint{font-size:10px;color:#a99be8;margin-top:6px}
+.value:empty:before{content:"Vide — appuie sur Modifier pour ajouter";color:#788397;font-style:italic}
+.editarea{width:100%;min-height:45px;border:1px solid #394255;border-radius:9px;padding:9px;font:inherit;font-size:14px;resize:vertical;background:#0d121b;color:var(--ink)}
+.editactions{display:flex;gap:8px;margin-top:12px}.editactions button{flex:1}
+.danger{background:#3a2027;color:#ff9eaa;border:1px solid #63313b}.footer{text-align:center;color:#9aa1b1;font-size:10px;margin-top:20px}
+.toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);background:#30394b;color:white;padding:11px 16px;border-radius:30px;font-size:12px;opacity:0;pointer-events:none;transition:.2s;z-index:10}.toast.show{opacity:1}
+@media(min-width:600px){header{padding:28px 22px}h1{font-size:28px}.actions{grid-template-columns:1fr 1fr 1fr}.usercard{padding:17px}}
+</style>
+</head>
+<body>
+<header><div class="top"><div class="eyebrow">Instagram • espace de travail</div><h1>Mes contenus</h1><p class="sub">Un profil par LDPlayer. Ouvre un utilisateur pour retrouver ses textes.</p></div></header>
+<main>
+<div id="home">
+<div class="actions">
+<label class="filebtn" for="importFile">＋ Importer XLSX / TXT</label>
+<input id="importFile" type="file" accept=".xlsx,.xls,.csv,.txt">
+<button class="primary" onclick="addUser()">＋ Ajouter un user</button>
+<button class="secondary" onclick="exportJSON()">↓ Sauvegarder mes données</button>
+<button class="secondary danger" onclick="deleteAll()">🗑 Tout supprimer</button>
+</div>
+
+<section class="panel show" id="usersSection" style="margin-top:4px">
+<div class="panelhead"><div class="paneltitle">Mes comptes Instagram</div></div>
+<input id="search" class="search" placeholder="Rechercher un user..." oninput="renderList()">
+<div id="list" class="list"></div>
+</section>
+
+<section class="panel show" id="ctaLibrary" style="margin-top:18px">
+<div class="panelhead"><div class="paneltitle">CTA communes à tous les profils</div></div>
+<p class="notice">Une CTA par ligne. Modifie ou ajoute tes CTA ici : elles seront disponibles dans tous les comptes.</p>
+<textarea id="ctaSettings" class="editarea" style="min-height:90px" placeholder="Une CTA par ligne"></textarea>
+<button class="primary" style="width:100%;margin-top:9px" onclick="saveCTASettings()">Enregistrer les CTA</button>
+</section>
+
+<section class="panel show" id="captionLibrary">
+<div class="panelhead"><div class="paneltitle">Bibliothèque de captions commune</div></div>
+<p class="notice">Toutes les captions sont partagées par tous les profils. Ajoute autant de captions que tu veux, une par bloc. Les phrases longues et les retours à la ligne sont conservés.</p>
+<textarea id="captionSettings" class="editarea" style="min-height:220px" placeholder="Écris ou colle tes captions ici. Sépare chaque caption par une ligne vide."></textarea>
+<button class="primary" style="width:100%;margin-top:9px" onclick="saveCaptionSettings()">Enregistrer les captions</button>
+</section>
+
+<p class="notice">Prépare tes contenus le matin, puis le soir ouvre le user du LDPlayer concerné et copie chaque élément dans Instagram. L'import ajoute les profils à ta liste. Les CTA et les captions sont communes à tous les profils.</p>
+</div>
+
+<section id="detail" class="panel">
+<div class="panelhead"><button class="back" onclick="goHome()">← Retour</button><div class="paneltitle" id="detailTitle"></div></div>
+<button class="copyall" onclick="copyAll()">📋 Copier le contenu affiché</button>
+<input id="captionSearch" class="search" style="margin:0 0 12px" placeholder="Rechercher dans toutes les captions..." oninput="searchCaptions()">
+<div id="captionResults"></div>
+<div id="fields"></div>
+<div class="editactions"><button class="primary" onclick="toggleEdit(true)">✎ Modifier</button><button class="secondary danger" onclick="deleteCurrent()">Supprimer</button></div>
+<div id="editor" style="display:none"></div>
+</section>
+
+<div class="footer">Enregistrement automatique sur cet appareil • Garde une sauvegarde de tes données</div>
+</main>
+<div class="toast" id="toast"></div>
+
+<script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
+<script>
+const PROFILE_STORE='insta_mobile_profiles_v3';
+const CTA_STORE='insta_mobile_global_ctas_v1';
+const CAPTION_STORE='insta_mobile_global_captions_v1';
+const DEFAULT_CTAS=["it's here <3","my secret side :3","What you're looking for 👀","don't look"];
+
+let profiles=[];
+try{profiles=JSON.parse(localStorage.getItem(PROFILE_STORE)||'[]');if(!Array.isArray(profiles))profiles=[];}catch(e){profiles=[];}
+
+let globalCTAs=[];
+try{globalCTAs=JSON.parse(localStorage.getItem(CTA_STORE)||'null');}catch(e){globalCTAs=null;}
+if(!Array.isArray(globalCTAs)||!globalCTAs.length)globalCTAs=[...DEFAULT_CTAS];
+
+let globalCaptions=[];
+try{globalCaptions=JSON.parse(localStorage.getItem(CAPTION_STORE)||'null');}catch(e){globalCaptions=null;}
+
+if(!Array.isArray(globalCaptions)){
+globalCaptions=[];
+profiles.forEach(p=>{
+Object.keys(p).filter(k=>/^caption\d+$/i.test(k)).sort((a,b)=>Number(a.replace(/\D/g,''))-Number(b.replace(/\D/g,''))).forEach(k=>{
+const value=String(p[k]||'');
+if(value.trim()&&!globalCaptions.includes(value))globalCaptions.push(value);
+});
+});
+localStorage.setItem(CAPTION_STORE,JSON.stringify(globalCaptions));
+}
+
+let currentId=null;
+const ctaShown={};
+const captionShown={};
+
+function save(){localStorage.setItem(PROFILE_STORE,JSON.stringify(profiles));}
+function saveCTAs(){localStorage.setItem(CTA_STORE,JSON.stringify(globalCTAs));}
+function saveCaptions(){localStorage.setItem(CAPTION_STORE,JSON.stringify(globalCaptions));}
+
+function toast(msg){
+const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');
+setTimeout(()=>t.classList.remove('show'),1700);
+}
+function id(){return 'p'+Date.now()+Math.random().toString(16).slice(2,6)}
+function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function randomOther(list,current){
+if(!list.length)return '';
+const choices=list.filter(x=>x!==current);
+const pool=choices.length?choices:list;
+return pool[Math.floor(Math.random()*pool.length)];
+}
+
+function renderList(){
+const q=(document.getElementById('search').value||'').toLowerCase();
+const list=document.getElementById('list');
+const found=profiles.filter(p=>(p.user||'Sans nom').toLowerCase().includes(q));
+if(!found.length){
+list.innerHTML='<div class="empty">Aucun user pour le moment.<br>Importe ton fichier ou ajoute un profil.</div>';
+return;
+}
+list.innerHTML=found.map(p=>`
+<div class="usercard">
+<div class="avatar">${esc((p.user||'?').replace('@','').charAt(0).toUpperCase())}</div>
+<div class="userinfo">
+<div class="username">${esc(p.user||'User sans nom')}</div>
+<div class="meta">LINK et @FOLLOW propres à ce profil</div>
+</div>
+<button class="openbtn" onclick="openProfile('${p.id}')">Ouvrir →</button>
+</div>`).join('');
+}
+
+function addUser(){
+const name=prompt('Nom du user Instagram (ex. @compte1) :');
+if(name===null)return;
+if(!name.trim()){alert('Entre un nom de compte.');return;}
+const p={id:id(),user:name.trim(),link:'',follow:''};
+profiles.unshift(p);save();renderList();openProfile(p.id);
+}
+
+function initSelections(){
+if(!globalCTAs.length)globalCTAs=[...DEFAULT_CTAS];
+if(!ctaShown[currentId])ctaShown[currentId]=globalCTAs[Math.floor(Math.random()*globalCTAs.length)];
+if(!captionShown[currentId]){
+const first=globalCaptions[0]||'';
+const second=globalCaptions.find(x=>x!==first)||first;
+captionShown[currentId]={1:first,2:second};
+}
+}
+
+function openProfile(pid){
+currentId=pid;
+const p=profiles.find(x=>x.id===pid);
+if(!p)return;
+initSelections();
+document.getElementById('home').style.display='none';
+document.getElementById('detail').classList.add('show');
+document.getElementById('detailTitle').textContent=p.user||'User sans nom';
+document.getElementById('captionSearch').value='';
+document.getElementById('captionResults').innerHTML='';
+renderFields();
+document.getElementById('editor').style.display='none';
+}
+
+function goHome(){
+document.getElementById('detail').classList.remove('show');
+document.getElementById('home').style.display='block';
+renderList();
+}
+
+function nextCTA(){
+if(!globalCTAs.length)return toast('Ajoute des CTA sur la page d’accueil');
+ctaShown[currentId]=randomOther(globalCTAs,ctaShown[currentId]);
+renderFields();
+}
+
+function nextCaption(slot){
+if(!globalCaptions.length)return toast('Ajoute des captions sur la page d’accueil');
+const current=captionShown[currentId][slot];
+captionShown[currentId][slot]=randomOther(globalCaptions,current);
+renderFields();
+}
+
+function fieldHTML(k,label){
+const p=profiles.find(x=>x.id===currentId);
+return `<div class="field"><div class="fieldtop"><span class="label">${label}</span><button class="copyone" onclick="copyField('${k}')">📋 Copier</button></div><div class="value">${esc(p?.[k]||'')}</div></div>`;
+}
+
+function captionSlotHTML(slot){
+const text=captionShown[currentId]?.[slot]||'';
+return `<div class="field">
+<div class="fieldtop"><span class="label">CAPTION ${slot}</span><button class="copyone" onclick="copySlot(${slot})">📋 Copier</button></div>
+<div class="value cta-value caption-value" onclick="nextCaption(${slot})" title="Appuie pour choisir une autre caption complète">${esc(text)}</div>
+<div class="cta-hint"></div>
+</div>`;
+}
+
+function renderFields(){
+const p=profiles.find(x=>x.id===currentId);
+if(!p)return;
+initSelections();
+document.getElementById('fields').innerHTML=
+`<div class="field">
+<div class="fieldtop"><span class="label">CTA</span><button class="copyone" onclick="copyCTA()">📋 Copier</button></div>
+<div class="value cta-value" onclick="nextCTA()" title="Appuie pour changer">${esc(ctaShown[currentId]||'')}</div>
+<div class="cta-hint">CTA commune à tous les profils.</div>
+</div>`+
+(p.link?fieldHTML('link','LINK'):'')+
+captionSlotHTML(1)+captionSlotHTML(2)+
+(p.follow?fieldHTML('follow','@FOLLOW'):'<div class="field"><div class="label">@FOLLOW</div><div class="value"></div></div>');
+}
+
+async function copyText(s){
+try{await navigator.clipboard.writeText(s||'');toast('Copié !')}
+catch(e){
+const ta=document.createElement('textarea');ta.value=s||'';
+document.body.appendChild(ta);ta.select();document.execCommand('copy');ta.remove();toast('Copié !');
+}
+}
+
+function copyCTA(){copyText(ctaShown[currentId]||'')}
+function copyField(k){const p=profiles.find(x=>x.id===currentId);if(p)copyText(p[k]||'')}
+function copySlot(slot){copyText(captionShown[currentId]?.[slot]||'')}
+
+function copyAll(){
+const p=profiles.find(x=>x.id===currentId);
+if(!p)return;
+copyText([
+'CTA: '+(ctaShown[currentId]||''),
+...(p.link?['LINK: '+p.link]:[]),
+'CAPTION 1: '+(captionShown[currentId]?.[1]||''),
+'CAPTION 2: '+(captionShown[currentId]?.[2]||''),
+'@FOLLOW: '+(p.follow||'')
+].join('\n\n'));
+}
+
+function searchCaptions(){
+const q=(document.getElementById('captionSearch').value||'').trim().toLocaleLowerCase();
+const box=document.getElementById('captionResults');
+if(!q){box.innerHTML='';return;}
+const hits=globalCaptions.map((text,i)=>({index:i,text})).filter(x=>x.text.toLocaleLowerCase().includes(q));
+if(!hits.length){
+box.innerHTML='<div class="empty" style="margin-bottom:10px">Aucune caption correspondante.</div>';
+return;
+}
+box.innerHTML='<div class="label" style="margin:4px 2px 8px">Résultats dans la bibliothèque commune</div>'+
+hits.map(x=>`
+<div class="field">
+<div class="fieldtop">
+<span class="label">CAPTION ${x.index+1}</span>
+<div style="display:flex;gap:5px;flex-wrap:wrap">
+<button class="copyone" onclick="copyGlobalCaption(${x.index})">Copier</button>
+<button class="copyone" onclick="useSearchCaption(${x.index},1)">Choisir 1</button>
+<button class="copyone" onclick="useSearchCaption(${x.index},2)">Choisir 2</button>
+</div>
+</div>
+<div class="value">${esc(x.text)}</div>
+</div>`).join('');
+}
+
+function copyGlobalCaption(i){copyText(globalCaptions[i]||'')}
+function useSearchCaption(i,slot){
+captionShown[currentId][slot]=globalCaptions[i]||'';
+renderFields();
+toast('Caption '+slot+' sélectionnée');
+}
+
+function formatFollow(value){
+const raw=String(value||'').trim();
+if(!raw)return '';
+if(/^follow\s+/i.test(raw))return raw;
+const handle=raw.startsWith('@')?raw:'@'+raw.replace(/^@+/,'');
+return 'Follow '+handle;
+}
+
+function saveProfileEdit(){
+const p=profiles.find(x=>x.id===currentId);
+if(!p)return;
+p.user=document.getElementById('edit_user').value.trim();
+p.link=document.getElementById('edit_link').value;
+p.follow=formatFollow(document.getElementById('edit_follow').value);
+save();
+document.getElementById('detailTitle').textContent=p.user||'User sans nom';
+renderFields();
+document.getElementById('editor').style.display='none';
+toast('Profil modifié');
+}
+
+function toggleEdit(show){
+const p=profiles.find(x=>x.id===currentId),box=document.getElementById('editor');
+if(!p)return;
+if(!show){box.style.display='none';return;}
+box.innerHTML=
+`<div class="field"><div class="label">USER</div><textarea class="editarea" id="edit_user">${esc(p.user||'')}</textarea></div>`+
+`<div class="field"><div class="label">LINK</div><textarea class="editarea" id="edit_link">${esc(p.link||'')}</textarea></div>`+
+`<div class="field"><div class="label">@FOLLOW</div><textarea class="editarea" id="edit_follow" placeholder="@username">${esc(p.follow||'')}</textarea><div class="cta-hint">Entre le @username : le texte sera automatiquement formaté en « Follow @username ».</div></div>`+
+'<button class="primary" style="width:100%;margin-top:10px" onclick="saveProfileEdit()">Enregistrer le profil</button>';
+box.style.display='block';
+box.scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function deleteCurrent(){
+if(!confirm('Supprimer ce profil ?'))return;
+profiles=profiles.filter(p=>p.id!==currentId);
+save();
+delete captionShown[currentId];
+delete ctaShown[currentId];
+currentId=null;
+goHome();
+}
+
+function normalizeKey(s){
+return String(s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]/g,'');
+}
+
+function mapRow(row){
+const p={id:id(),user:'',link:'',follow:''};
+for(const [key,val] of Object.entries(row||{})){
+const n=normalizeKey(key),value=String(val??'');
+if(n==='user'||n==='username'||n==='compte')p.user=value.trim();
+else if(n==='link')p.link=value;
+else if(n==='follow'||n==='followuser'||n==='atfollow')p.follow=formatFollow(value);
+else{
+const m=n.match(/^caption(?:([0-9]{1,3}))?$/);
+if(m){
+const ix=Number(m[1]||1);
+if(ix>=1){
+const caption=value;
+if(caption.trim()&&!globalCaptions.includes(caption))globalCaptions.push(caption);
+}
+}
+}
+}
+return p.user?p:null;
+}
+
+async function importFile(file){
+const ext=(file.name.split('.').pop()||'').toLowerCase();
+try{
+let incoming=[];
+if(['xlsx','xls'].includes(ext)){
+if(!window.XLSX)throw new Error("Le lecteur Excel ne s'est pas chargé. Vérifie Internet, puis recharge la page. Tu peux aussi importer un CSV ou TXT.");
+const wb=XLSX.read(await file.arrayBuffer());
+const ws=wb.Sheets[wb.SheetNames[0]];
+incoming=XLSX.utils.sheet_to_json(ws,{defval:'',raw:false}).map(mapRow).filter(Boolean);
+}else if(ext==='csv'){
+incoming=parseDelimited(await file.text());
+}else{
+incoming=parseText(await file.text());
+}
+if(!incoming.length)throw new Error("Aucun compte trouvé. Vérifie que la première ligne contient l'en-tête USER et que les comptes sont renseignés.");
+profiles=[...incoming,...profiles];
+save();
+saveCaptions();
+renderList();
+toast(incoming.length+' compte(s) importé(s) • captions communes mises à jour');
+}catch(e){alert(e.message||"Impossible de lire ce fichier.");}
+document.getElementById('importFile').value='';
+}
+
+function parseText(txt){
+const blocks=txt.replace(/\r/g,'').split(/\n\s*\n/g).filter(b=>b.trim());
+return blocks.map(block=>{
+const obj={};let currentKey=null;
+block.split('\n').forEach(line=>{
+const m=line.match(/^\s*([^:：]+)\s*[:：]\s*(.*)$/);
+if(m){currentKey=m[1].trim();obj[currentKey]=m[2];}
+else if(currentKey)obj[currentKey]+='\n'+line;
+});
+return mapRow(obj);
+}).filter(Boolean);
+}
+
+function parseDelimited(txt){
+const lines=txt.replace(/\r/g,'').split('\n').filter(x=>x.trim());
+if(lines.length<2)return [];
+const delim=lines[0].includes('\t')?'\t':(lines[0].includes(';')?';':',');
+const headers=lines[0].split(delim).map(x=>x.trim());
+return lines.slice(1).map(line=>{
+const cells=line.split(delim),o={};
+headers.forEach((h,i)=>o[h]=cells[i]||'');
+return mapRow(o);
+}).filter(Boolean);
+}
+
+function saveCTASettings(){
+const values=document.getElementById('ctaSettings').value.split('\n').map(x=>x.trim()).filter(Boolean);
+if(!values.length){alert('Ajoute au moins une CTA.');return;}
+globalCTAs=values;
+saveCTAs();
+Object.keys(ctaShown).forEach(k=>{
+if(!globalCTAs.includes(ctaShown[k]))ctaShown[k]=globalCTAs[0];
+});
+if(currentId)renderFields();
+toast('CTA communes enregistrées');
+}
+
+function saveCaptionSettings(){
+const raw=document.getElementById('captionSettings').value.replace(/\r/g,'');
+globalCaptions=raw.split(/\n\s*\n/g).map(x=>x.trim()).filter(Boolean);
+saveCaptions();
+Object.keys(captionShown).forEach(pid=>{
+[1,2].forEach(slot=>{
+if(!globalCaptions.includes(captionShown[pid][slot]))
+captionShown[pid][slot]=globalCaptions[slot-1]||globalCaptions[0]||'';
+});
+});
+if(currentId)renderFields();
+toast(globalCaptions.length+' caption(s) communes enregistrées');
+}
+
+function exportJSON(){
+const blob=new Blob([JSON.stringify({profiles,globalCTAs,globalCaptions},null,2)],{type:'application/json'});
+const a=document.createElement('a');
+a.href=URL.createObjectURL(blob);
+a.download='sauvegarde-instagram.json';
+a.click();
+URL.revokeObjectURL(a.href);
+toast('Sauvegarde téléchargée');
+}
+
+function deleteAll(){
+if(!profiles.length){toast('La liste est déjà vide');return;}
+if(!confirm('ATTENTION : supprimer TOUS les profils ? Les CTA et captions communes seront conservées.'))return;
+profiles=[];
+save();
+currentId=null;
+document.getElementById('detail').classList.remove('show');
+document.getElementById('home').style.display='block';
+renderList();
+toast('Tous les profils ont été supprimés');
+}
+
+function initSettings(){
+document.getElementById('ctaSettings').value=globalCTAs.join('\n');
+document.getElementById('captionSettings').value=globalCaptions.join('\n\n');
+}
+
+document.getElementById('importFile').addEventListener('change',e=>{
+if(e.target.files&&e.target.files[0])importFile(e.target.files[0]);
+});
+
+initSettings();
+renderList();
+</script>
+</body>
+</html>
