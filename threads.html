@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tableau quotidien Instagram</title>
+<style>
+  :root { color-scheme: dark; --bg:#111315; --panel:#191c20; --line:#34383e; --text:#f1f2f3; --muted:#aeb4bc; --accent:#8b9cff; }
+  * { box-sizing:border-box; }
+  body { margin:0; padding:24px; background:var(--bg); color:var(--text); font:14px/1.45 Arial,sans-serif; }
+  h1 { margin:0 0 6px; font-size:22px; }
+  .sub { color:var(--muted); margin:0 0 18px; }
+  .toolbar { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:14px; }
+  button { border:1px solid #454b54; border-radius:7px; padding:9px 13px; background:#252a31; color:white; cursor:pointer; }
+  button:hover { background:#343b45; }
+  button.primary { background:#5268d8; border-color:#5268d8; }
+  .table-wrap { overflow:auto; border:1px solid var(--line); border-radius:9px; }
+  table { width:100%; min-width:900px; border-collapse:collapse; table-layout:fixed; }
+  th { background:#202328; color:#bfc4cc; font-weight:600; text-align:left; padding:11px 10px; border-right:1px solid var(--line); border-bottom:1px solid var(--line); }
+  td { padding:10px; border-right:1px solid var(--line); border-bottom:1px solid var(--line); vertical-align:top; overflow-wrap:anywhere; }
+  tr:last-child td { border-bottom:0; }
+  th:last-child, td:last-child { border-right:0; }
+  .cell-wrap { display:flex; align-items:flex-start; gap:6px; min-height:34px; }
+  .cell-text { flex:1; min-width:0; min-height:30px; outline:none; cursor:text; overflow-wrap:anywhere; }
+  .cell-text:focus { background:#222a38; box-shadow:inset 0 0 0 1px var(--accent); }
+  .copy-cell { flex:0 0 auto; padding:4px 6px; font-size:12px; line-height:1.2; border-radius:5px; }
+  .copy-cell.copied { background:#26734a; border-color:#26734a; }
+  td a { color:#aebcff; }
+  .col-user { width:15%; } .col-follow { width:15%; } .col-cta { width:15%; } .col-link { width:28%; } .col-cap { width:14%; } .col-cap2 { width:13%; }
+  .row-actions { white-space:nowrap; width:55px; }
+  .delete { padding:5px 8px; color:#ffb4b4; }
+  .note { color:var(--muted); font-size:12px; margin-top:12px; }
+  textarea { width:100%; min-height:100px; margin-top:10px; padding:10px; color:var(--text); background:#191c20; border:1px solid var(--line); border-radius:7px; }
+  details { margin-top:18px; color:var(--muted); }
+  @media (max-width:700px) { body { padding:12px; } }
+</style>
+</head>
+<body>
+<h1>Tableau quotidien</h1>
+<p class="sub">Modifie directement les cellules. Les changements sont enregistrés automatiquement sur cet appareil.</p>
+
+<div class="toolbar">
+  <button class="primary" onclick="addRow()">＋ Ajouter une ligne</button>
+  <button onclick="copyTable()">Copier tout le tableau</button>
+  <button onclick="copyHeaders()">Copier les en-têtes</button>
+  <button onclick="downloadCSV()">Télécharger en CSV</button>
+  <button onclick="clearTable()">Vider le tableau</button>
+</div>
+
+<div class="table-wrap">
+<table id="dataTable">
+  <colgroup>
+    <col class="col-user"><col class="col-follow"><col class="col-cta">
+    <col class="col-link"><col class="col-cap"><col class="col-cap2"><col style="width:55px">
+  </colgroup>
+  <thead><tr>
+    <th>@user</th><th>⚙ FOLLOW</th><th>☰ CTA</th><th>🔗 LINK</th><th>💬 CAP</th><th>💬 CAP 2</th><th></th>
+  </tr></thead>
+  <tbody id="tableBody"></tbody>
+</table>
+</div>
+<p class="note">Astuce : sélectionne une cellule et colle ton texte. Tu peux aussi copier tout le tableau puis le coller dans Excel ou Google Sheets.</p>
+
+<details>
+  <summary>Importer plusieurs lignes depuis Excel / Google Sheets</summary>
+  <p>Colle ici des données séparées par tabulations (colonnes) et retours à la ligne (lignes), puis clique sur Importer.</p>
+  <textarea id="pasteArea" placeholder="emillia_boy&#9;Follow @emillia...&#9;it's here &lt;3&#9;https://...&#9;Sleeper build?&#9;18y single..."></textarea>
+  <button onclick="importRows()">Importer les lignes</button>
+</details>
+
+<script>
+const headers = ["@user","FOLLOW","CTA","LINK","CAP","CAP 2"];
+const starter = [
+ ["emillia_boy","Follow @emillia","it's here <3","https://mylinky.fans/haileywlw","Sleeper build?","18y single want"],
+ ["hailey.wlw","Follow @hailey","my secret side","https://mylinky.fans/leaahntj","my account is s","Is 2008 really t"],
+ ["leaah_tnj","Follow @leaah","What you're looking","https://mylinky.fans/","Congrats. You j","3 things I want"],
+ ["lilly.glaw","Follow @lilly","my secret side","https://mylinky.fans/laurenskl","account so sma","my acc so tiny"],
+ ["alyssa.omii","Follow @alyssa","don't look","https://mylinky.fans/gracewti","careful how u l","so small i see e"],
+ ["isabella.quyi","Follow @isabel","What you're looking","https://mylinky.fans/haileywlw","account so sma","acc so small th"]
+];
+const body = document.getElementById("tableBody");
+function escapeHTML(s) { return String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
+function addRow(values = ["","","","","",""]) {
+  const tr = document.createElement("tr");
+  values.forEach((value, i) => {
+    const td = document.createElement("td");
+    const wrap = document.createElement("div");
+    wrap.className = "cell-wrap";
+    const content = document.createElement("div");
+    content.className = "cell-text";
+    content.contentEditable = "true";
+    content.spellcheck = false;
+    content.dataset.col = headers[i];
+    content.innerHTML = escapeHTML(value);
+    content.addEventListener("input", save);
+    const copy = document.createElement("button");
+    copy.className = "copy-cell";
+    copy.type = "button";
+    copy.title = "Copier cette cellule";
+    copy.setAttribute("aria-label", "Copier " + headers[i]);
+    copy.textContent = "📋";
+    copy.addEventListener("click", async () => {
+      await copyText(content.innerText);
+      copy.classList.add("copied");
+      copy.textContent = "✓";
+      setTimeout(() => { copy.classList.remove("copied"); copy.textContent = "📋"; }, 900);
+    });
+    wrap.append(content, copy);
+    td.appendChild(wrap);
+    tr.appendChild(td);
+  });
+  const action = document.createElement("td");
+  action.className = "row-actions";
+  const del = document.createElement("button");
+  del.className = "delete"; del.textContent = "✕"; del.title = "Supprimer cette ligne";
+  del.onclick = () => { tr.remove(); save(); };
+  action.appendChild(del); tr.appendChild(action); body.appendChild(tr);
+}
+function getRows() {
+  return [...body.rows].map(row => [...row.cells].slice(0,6).map(cell => cell.querySelector(".cell-text").innerText.trim()));
+}
+function save() { localStorage.setItem("dailyTableRows", JSON.stringify(getRows())); }
+function load() {
+  let rows;
+  try { rows = JSON.parse(localStorage.getItem("dailyTableRows")); } catch(e) {}
+  (Array.isArray(rows) ? rows : starter).forEach(addRow);
+}
+async function copyText(text) {
+  try { await navigator.clipboard.writeText(text); alert("Copié !"); }
+  catch(e) { const area=document.createElement("textarea"); area.value=text; document.body.appendChild(area); area.select(); document.execCommand("copy"); area.remove(); alert("Copié !"); }
+}
+function copyTable() { copyText([headers.join("\t"), ...getRows().map(r=>r.join("\t"))].join("\n")); }
+function copyHeaders() { copyText(headers.join("\t")); }
+function downloadCSV() {
+  const rows = [headers, ...getRows()];
+  const csv = "\uFEFF" + rows.map(r=>r.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(";")).join("\r\n");
+  const blob = new Blob([csv], {type:"text/csv;charset=utf-8;"});
+  const a = document.createElement("a"); a.href=URL.createObjectURL(blob); a.download="tableau-quotidien.csv"; a.click(); URL.revokeObjectURL(a.href);
+}
+function clearTable() {
+  if (!confirm("Vider toutes les lignes ? Cette action ne peut pas être annulée.")) return;
+  body.innerHTML=""; save();
+}
+function importRows() {
+  const raw=document.getElementById("pasteArea").value.trim();
+  if (!raw) return;
+  raw.split(/\r?\n/).forEach(line => {
+    const cols=line.split("\t");
+    if (cols.length===1) return;
+    addRow(headers.map((_,i)=>cols[i] || ""));
+  });
+  save(); document.getElementById("pasteArea").value="";
+}
+load();
+</script>
+</body>
+</html>
