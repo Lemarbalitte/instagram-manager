@@ -80,7 +80,7 @@ input[type=file]{display:none}
 
 <section id="detail" class="panel">
 <div class="panelhead"><button class="back" onclick="goHome()">← Retour</button><div class="paneltitle" id="detailTitle"></div></div>
-<button class="copyall" onclick="copyAll()">📋 Copier le contenu affiché</button>
+<button class="copyall" onclick="copyAll()">📋 Copy le contenu affiché</button>
 <input id="captionSearch" class="search" style="margin:0 0 12px" placeholder="Rechercher dans toutes les captions..." oninput="searchCaptions()">
 <div id="captionResults"></div>
 <div id="fields"></div>
@@ -213,13 +213,13 @@ renderFields();
 
 function fieldHTML(k,label){
 const p=profiles.find(x=>x.id===currentId);
-return `<div class="field"><div class="fieldtop"><span class="label">${label}</span><button class="copyone" onclick="copyField('${k}')">📋 Copier</button></div><div class="value">${esc(p?.[k]||'')}</div></div>`;
+return `<div class="field"><div class="fieldtop"><span class="label">${label}</span><button class="copyone" onclick="copyField('${k}')">📋 Copy</button></div><div class="value">${esc(p?.[k]||'')}</div></div>`;
 }
 
 function captionSlotHTML(slot){
 const text=captionShown[currentId]?.[slot]||'';
 return `<div class="field">
-<div class="fieldtop"><span class="label">CAPTION ${slot}</span><button class="copyone" onclick="copySlot(${slot})">📋 Copier</button></div>
+<div class="fieldtop"><span class="label">CAPTION ${slot}</span><button class="copyone" onclick="copySlot(${slot})">📋 Copy</button></div>
 <div class="value cta-value caption-value" onclick="nextCaption(${slot})" title="Appuie pour choisir une autre caption complète">${esc(text)}</div>
 <div class="cta-hint"></div>
 </div>`;
@@ -231,7 +231,7 @@ if(!p)return;
 initSelections();
 document.getElementById('fields').innerHTML=
 `<div class="field">
-<div class="fieldtop"><span class="label">CTA</span><button class="copyone" onclick="copyCTA()">📋 Copier</button></div>
+<div class="fieldtop"><span class="label">CTA</span><button class="copyone" onclick="copyCTA()">📋 Copy</button></div>
 <div class="value cta-value" onclick="nextCTA()" title="Appuie pour changer">${esc(ctaShown[currentId]||'')}</div>
 <div class="cta-hint">CTA commune à tous les profils.</div>
 </div>`+
