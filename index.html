@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#111827">
-<title>MALORAA !!</title>
+<title>Mes contenus Instagram</title>
 <style>
 :root{color-scheme:dark;--bg:#0b0e14;--card:#151a24;--ink:#eef1f8;--muted:#9aa4b5;--line:#2a3140;--accent:#a18aff;--soft:#29233f;--green:#48c99a}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;color:var(--ink)}
@@ -44,7 +44,7 @@ input[type=file]{display:none}
 </style>
 </head>
 <body>
-<header><div class="top"><div class="eyebrow">Instagram • espace de travail</div><h1>MALORAA !!</h1><p class="sub">Un profil par LDPlayer. Ouvre un utilisateur pour retrouver ses textes.</p></div></header>
+<header><div class="top"><div class="eyebrow">Instagram • espace de travail</div><h1>Mes contenus</h1><p class="sub">Un profil par LDPlayer. Ouvre un utilisateur pour retrouver ses textes.</p></div></header>
 <main>
 <div id="home">
 <div class="actions">
@@ -80,7 +80,7 @@ input[type=file]{display:none}
 
 <section id="detail" class="panel">
 <div class="panelhead"><button class="back" onclick="goHome()">← Retour</button><div class="paneltitle" id="detailTitle"></div></div>
-<button class="copyall" onclick="copyAll()">📋 Copy le contenu affiché</button>
+<button class="copyall" onclick="copyAll()">📋 Copier le contenu affiché</button>
 <input id="captionSearch" class="search" style="margin:0 0 12px" placeholder="Rechercher dans toutes les captions..." oninput="searchCaptions()">
 <div id="captionResults"></div>
 <div id="fields"></div>
@@ -97,8 +97,28 @@ input[type=file]{display:none}
 const PROFILE_STORE='insta_mobile_profiles_v3';
 const CTA_STORE='insta_mobile_global_ctas_v1';
 const CAPTION_STORE='insta_mobile_global_captions_v1';
-const DEFAULT_CTAS=["it's here <3","my secret side :3","What you're looking for 👀","don't look","oops 🤭","it's here <3","More of me 💙","don't miss out 👀","more of me <3","for ur eyes only 👀","for ur eyes only 👀","lets talk smthing h.. 🥵","don't leak it","secret <3","my secret side :3","mmmh 👀","tap :3","More of me 🤍","don't look","you're welcome 😇","what ur 👀 for","bet you are looking for this! 🤫","don't miss out 👀","curious?","all yours ❤️❤️","online <3];
-
+const DEFAULT_CTAS=[
+"oops 🤭",
+"it's here <3",
+"More of me 💙",
+"don't miss out 👀",
+"more of me <3",
+"for ur eyes only 👀",
+"lets talk smthing h.. 🥵",
+"don't leak it",
+"secret <3",
+"my secret side :3",
+"mmmh 👀",
+"tap :3",
+"More of me 🤍",
+"don't look",
+"you're welcome 😇",
+"what ur 👀 for",
+"bet you are looking for this! 🤫",
+"curious?",
+"all yours ❤️❤️",
+"online <3"
+];
 let profiles=[];
 try{profiles=JSON.parse(localStorage.getItem(PROFILE_STORE)||'[]');if(!Array.isArray(profiles))profiles=[];}catch(e){profiles=[];}
 
@@ -213,15 +233,15 @@ renderFields();
 
 function fieldHTML(k,label){
 const p=profiles.find(x=>x.id===currentId);
-return `<div class="field"><div class="fieldtop"><span class="label">${label}</span><button class="copyone" onclick="copyField('${k}')">📋 Copy</button></div><div class="value">${esc(p?.[k]||'')}</div></div>`;
+return `<div class="field"><div class="fieldtop"><span class="label">${label}</span><button class="copyone" onclick="copyField('${k}')">📋 Copier</button></div><div class="value">${esc(p?.[k]||'')}</div></div>`;
 }
 
 function captionSlotHTML(slot){
 const text=captionShown[currentId]?.[slot]||'';
 return `<div class="field">
-<div class="fieldtop"><span class="label">CAPTION ${slot}</span><button class="copyone" onclick="copySlot(${slot})">📋 Copy</button></div>
+<div class="fieldtop"><span class="label">CAPTION ${slot}</span><button class="copyone" onclick="copySlot(${slot})">📋 Copier</button></div>
 <div class="value cta-value caption-value" onclick="nextCaption(${slot})" title="Appuie pour choisir une autre caption complète">${esc(text)}</div>
-<div class="cta-hint"></div>
+<div class="cta-hint">Caption commune à tous les profils. Appuie sur le texte pour en choisir une autre. Texte et retours à la ligne conservés.</div>
 </div>`;
 }
 
@@ -231,7 +251,7 @@ if(!p)return;
 initSelections();
 document.getElementById('fields').innerHTML=
 `<div class="field">
-<div class="fieldtop"><span class="label">CTA</span><button class="copyone" onclick="copyCTA()">📋 Copy</button></div>
+<div class="fieldtop"><span class="label">CTA</span><button class="copyone" onclick="copyCTA()">📋 Copier</button></div>
 <div class="value cta-value" onclick="nextCTA()" title="Appuie pour changer">${esc(ctaShown[currentId]||'')}</div>
 <div class="cta-hint">CTA commune à tous les profils.</div>
 </div>`+
