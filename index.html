@@ -97,7 +97,29 @@ input[type=file]{display:none}
 const PROFILE_STORE='insta_mobile_profiles_v3';
 const CTA_STORE='insta_mobile_global_ctas_v1';
 const CAPTION_STORE='insta_mobile_global_captions_v1';
-const DEFAULT_CTAS=["it's here <3","my secret side :3","What you're looking for 👀","don't look","1","2","3"];
+const DEFAULT_CTAS=["it's here <3","my secret side :3","What you're looking for 👀","don't look",
+"oops 🤭",
+"it's here <3",
+"More of me 💙",
+"don't miss out 👀",
+"more of me <3",
+"for ur eyes only 👀",
+"for ur eyes only 👀",
+"lets talk smthing h.. 🥵",
+"don't leak it",
+"secret <3",
+"my secret side :3",
+"mmmh 👀",
+"tap :3",
+"More of me 🤍",
+"don't look",
+"you're welcome 😇",
+"what ur 👀 for",
+"bet you are looking for this! 🤫",
+"don't miss out 👀",
+"curious?",
+"all yours ❤️❤️",
+"online <3];
 
 let profiles=[];
 try{profiles=JSON.parse(localStorage.getItem(PROFILE_STORE)||'[]');if(!Array.isArray(profiles))profiles=[];}catch(e){profiles=[];}
