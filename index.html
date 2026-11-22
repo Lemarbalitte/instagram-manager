@@ -493,5 +493,84 @@ if(e.target.files&&e.target.files[0])importFile(e.target.files[0]);
 initSettings();
 renderList();
 </script>
+
+<!-- BOUTONS DE ROTATION : modifie les noms et les liens dans ROTATION_BUTTONS -->
+<style>
+#rotationButtons{
+  position:fixed;
+  right:12px;
+  bottom:12px;
+  display:flex;
+  gap:7px;
+  z-index:9999;
+}
+.rotation-ip-btn{
+  min-width:42px;
+  height:34px;
+  padding:0 10px;
+  border:1px solid #514477;
+  border-radius:10px;
+  background:#211b35;
+  color:#eee8ff;
+  box-shadow:0 2px 8px #0004;
+  font:700 12px system-ui,sans-serif;
+  cursor:pointer;
+}
+.rotation-ip-btn:disabled{opacity:.35;cursor:not-allowed}
+.rotation-ip-btn.busy{opacity:.55;pointer-events:none}
+.rotation-ip-btn.sent{border-color:#16865b;color:#7ce0b4}
+</style>
+
+<div id="rotationButtons" aria-label="Boutons de rotation IP"></div>
+
+<script>
+(function(){
+  // MODIFIE ICI les noms et les URL. Laisse url vide si le bouton n'est pas encore utilisé.
+  const ROTATION_BUTTONS = [
+    { label: 'ROT M1', url: 'https://i.fxdx.in/actionlinks/do/changeip/0ambrTi0S9apSZet4X8g-Q' },
+    { label: 'ROT M2', url: 'https://i.fxdx.in/actionlinks/do/changeip/_C-QdKR_QxKcOGM0tcNRTg' },
+    { label: 'ROT D', url: 'https://i.fxdx.in/actionlinks/do/changeip/vFMwQUjERKCSW2whEIMdTw' }
+  ];
+
+  const container = document.getElementById('rotationButtons');
+
+  ROTATION_BUTTONS.forEach((rotation, index) => {
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'rotation-ip-btn';
+    button.textContent = rotation.label || `ROT ${index + 1}`;
+    button.title = rotation.url ? `Déclencher ${button.textContent}` : 'Ajoute une URL dans ROTATION_BUTTONS pour activer ce bouton';
+    button.disabled = !rotation.url;
+    container.appendChild(button);
+
+    button.addEventListener('click', async () => {
+      if (!rotation.url || button.classList.contains('busy')) return;
+      button.classList.add('busy');
+      button.textContent = '…';
+
+      try {
+        // no-cors permet de déclencher l'URL externe sans serveur intermédiaire.
+        // Le navigateur ne permet pas de lire la réponse du service.
+        await fetch(rotation.url, {
+          method: 'GET',
+          mode: 'no-cors',
+          cache: 'no-store'
+        });
+        button.classList.add('sent');
+        button.textContent = '✓';
+      } catch (error) {
+        button.textContent = '!';
+        console.error('Erreur lors du déclenchement de la rotation :', error);
+      }
+
+      setTimeout(() => {
+        button.textContent = rotation.label || `ROT ${index + 1}`;
+        button.classList.remove('busy', 'sent');
+      }, 1500);
+    });
+  });
+})();
+</script>
+
 </body>
 </html>
