@@ -48,8 +48,10 @@ input[type=file]{display:none}
 <main>
 <div id="home">
 <div class="actions">
-<label class="filebtn" for="importFile">＋ Importer XLSX / TXT</label>
+<label class="filebtn" for="importFile">＋ Importer profils XLSX / TXT</label>
 <input id="importFile" type="file" accept=".xlsx,.xls,.csv,.txt">
+<label class="filebtn" for="importCaptionsFile">＋ Importer captions TXT</label>
+<input id="importCaptionsFile" type="file" accept=".txt">
 <button class="primary" onclick="addUser()">＋ Ajouter un user</button>
 <button class="secondary" onclick="exportJSON()">↓ Sauvegarder mes données</button>
 <button class="secondary danger" onclick="deleteAll()">🗑 Tout supprimer</button>
@@ -75,7 +77,7 @@ input[type=file]{display:none}
 <button class="primary" style="width:100%;margin-top:9px" onclick="saveCaptionSettings()">Enregistrer les captions</button>
 </section>
 
-<p class="notice">Prépare tes contenus le matin, puis le soir ouvre le user du LDPlayer concerné et copie chaque élément dans Instagram. L'import ajoute les profils à ta liste. Les CTA et les captions sont communes à tous les profils.</p>
+<p class="notice">Prépare tes contenus le matin, puis le soir ouvre le user du LDPlayer concerné et copie chaque élément dans Instagram. L'import ajoute les profils à ta liste. Tu peux aussi importer uniquement tes captions depuis un fichier TXT. Les retours à la ligne sont conservés.</p>
 </div>
 
 <section id="detail" class="panel">
@@ -445,6 +447,29 @@ if(currentId)renderFields();
 toast('CTA communes enregistrées');
 }
 
+async function importCaptionsTXT(file){
+try{
+const raw=(await file.text()).replace(/\r/g,'');
+const captions=raw.split(/\n\s*\n/g).map(x=>x.trim()).filter(Boolean);
+if(!captions.length)throw new Error('Aucune caption trouvée dans le fichier TXT.');
+let added=0;
+captions.forEach(c=>{
+if(!globalCaptions.includes(c)){globalCaptions.push(c);added++;}
+});
+saveCaptions();
+document.getElementById('captionSettings').value=globalCaptions.join('\n\n');
+Object.keys(captionShown).forEach(pid=>{
+[1,2].forEach(slot=>{
+if(!globalCaptions.includes(captionShown[pid][slot]))
+captionShown[pid][slot]=globalCaptions[slot-1]||globalCaptions[0]||'';
+});
+});
+if(currentId)renderFields();
+toast(added+' caption(s) importée(s)');
+}catch(e){alert(e.message||'Impossible de lire le fichier TXT.');}
+document.getElementById('importCaptionsFile').value='';
+}
+
 function saveCaptionSettings(){
 const raw=document.getElementById('captionSettings').value.replace(/\r/g,'');
 globalCaptions=raw.split(/\n\s*\n/g).map(x=>x.trim()).filter(Boolean);
@@ -488,6 +513,10 @@ document.getElementById('captionSettings').value=globalCaptions.join('\n\n');
 
 document.getElementById('importFile').addEventListener('change',e=>{
 if(e.target.files&&e.target.files[0])importFile(e.target.files[0]);
+});
+
+document.getElementById('importCaptionsFile').addEventListener('change',e=>{
+if(e.target.files&&e.target.files[0])importCaptionsTXT(e.target.files[0]);
 });
 
 initSettings();
