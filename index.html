@@ -265,18 +265,22 @@ return `<div class="field">
 }
 
 function renderFields(){
-const p=profiles.find(x=>x.id===currentId);
-if(!p)return;
-initSelections();
-document.getElementById('fields').innerHTML=
-(p.link?fieldHTML('link','LINK'):'')+
-`<div class="field">
-<div class="fieldtop"><span class="label">CTA</span><button class="copyone" onclick="copyCTA()">📋 Copier</button></div>
-<div class="value cta-value" onclick="nextCTA()">${esc(ctaShown[currentId]||'')}</div>
-</div>`+
-(p.follow?fieldHTML('follow','@FOLLOW'):'<div class="field"><div class="label">@FOLLOW</div><div class="value"></div></div>')+
-captionSlotHTML(1)+
-captionSlotHTML(2);
+  const p=profiles.find(x=>x.id===currentId);
+  if(!p)return;
+  initSelections();
+  document.getElementById('fields').innerHTML=
+    `<div class="field">
+      <div class="fieldtop"><span class="label">CTA</span><button class="copyone" onclick="copyCTA()">📋 Copier</button></div>
+      <div class="value cta-value" onclick="nextCTA()">${esc(ctaShown[currentId]||'')}</div>
+    </div>`+
+    (p.link?fieldHTML('link','LINK'):'')+
+    (p.follow?fieldHTML('follow','@FOLLOW'):'<div class="field"><div class="label">@FOLLOW</div><div class="value"></div></div>')+
+    captionSlotHTML(1)+
+    captionSlotHTML(2)+
+    fieldHTML('password','PASSWORD')+
+    fieldHTML('bio','BIO')+
+    fieldHTML('user','USERNAME')+
+    fieldHTML('fullname','FULL NAME');
 }
 
 async function copyText(s){
