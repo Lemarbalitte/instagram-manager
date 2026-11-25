@@ -77,7 +77,7 @@ input[type=file]{display:none}
 <button class="primary" style="width:100%;margin-top:9px" onclick="saveCaptionSettings()">Enregistrer les captions</button>
 </section>
 
-<p class="notice">Prépare tes contenus le matin, puis le soir ouvre le user du LDPlayer concerné et copie chaque élément dans Instagram. L'import ajoute les profils à ta liste. Tu peux aussi importer uniquement tes captions depuis un fichier TXT. Les retours à la ligne sont conservés.<br><br><b>TXT pour créer des profils :</b><br>USERNAME: test_user<br>FULL NAME: Emma Wilson<br>PASSWORD: Xx123456!<br>BIO: Just enjoying life ✨<br>LINK: https://instagram.com/test_user<br>FOLLOW: @test_user<br><br>Pour plusieurs profils, laisse une ligne vide entre chaque profil.</p>
+<p class="notice">Prépare tes contenus le matin, puis le soir ouvre le user du LDPlayer concerné et copie chaque élément dans Instagram.<br><br><b>TXT pour créer des profils :</b><br>USERNAME: test_user<br>FULL NAME: Emma Wilson<br>PASSWORD: Xx123456!<br>BIO: Just enjoying life ✨<br>LINK: https://instagram.com/test_user<br>FOLLOW: @test_user<br><br>Pour plusieurs profils, laisse une ligne vide entre chaque profil.</p>
 </div>
 
 <section id="detail" class="panel">
@@ -439,7 +439,7 @@ incoming=parseDelimited(await file.text());
 }else{
 incoming=parseText(await file.text());
 }
-if(!incoming.length)throw new Error("Aucun compte trouvé. Vérifie que la première ligne contient l'en-tête USER et que les comptes sont renseignés.");
+if(!incoming.length)throw new Error("Aucun compte trouvé.");
 profiles=[...incoming,...profiles];
 save();
 saveCaptions();
