@@ -34,8 +34,8 @@ input[type=file]{display:none}
 .label{font-size:11px;font-weight:850;color:var(--muted);letter-spacing:.7px;text-transform:uppercase}
 .copyone{padding:7px 10px;background:var(--soft);color:var(--accent);font-size:11px}
 .value{font-size:14px;line-height:1.5;white-space:pre-wrap;overflow-wrap:anywhere;min-height:18px}
-.cta-value{cursor:pointer;border:1px dashed #7763c9;border-radius:9px;padding:10px;background:#211d32;color:#eee8ff}.cta-hint{font-size:10px;color:#a99be8;margin-top:6px}
-.value:empty:before{content:"Vide — appuie sur Modifier pour ajouter";color:#788397;font-style:italic}
+.cta-value{cursor:pointer;border:1px dashed #7763c9;border-radius:9px;padding:10px;background:#211d32;color:#eee8ff}
+
 .editarea{width:100%;min-height:45px;border:1px solid #394255;border-radius:9px;padding:9px;font:inherit;font-size:14px;resize:vertical;background:#0d121b;color:var(--ink)}
 .editactions{display:flex;gap:8px;margin-top:12px}.editactions button{flex:1}
 .danger{background:#3a2027;color:#ff9eaa;border:1px solid #63313b}.footer{text-align:center;color:#9aa1b1;font-size:10px;margin-top:20px}
@@ -77,7 +77,7 @@ input[type=file]{display:none}
 <button class="primary" style="width:100%;margin-top:9px" onclick="saveCaptionSettings()">Enregistrer les captions</button>
 </section>
 
-<p class="notice">Prépare tes contenus le matin, puis le soir ouvre le user du LDPlayer concerné et copie chaque élément dans Instagram. L'import ajoute les profils à ta liste. Tu peux aussi importer uniquement tes captions depuis un fichier TXT. Les retours à la ligne sont conservés.</p>
+<p class="notice">Prépare tes contenus le matin, puis le soir ouvre le user du LDPlayer concerné et copie chaque élément dans Instagram. L'import ajoute les profils à ta liste. Tu peux aussi importer uniquement tes captions depuis un fichier TXT. Les retours à la ligne sont conservés.<br><br><b>TXT pour créer des profils :</b><br>USERNAME: test_user<br>FULL NAME: Emma Wilson<br>PASSWORD: Xx123456!<br>BIO: Just enjoying life ✨<br>LINK: https://instagram.com/test_user<br>FOLLOW: @test_user<br><br>Pour plusieurs profils, laisse une ligne vide entre chaque profil.</p>
 </div>
 
 <section id="detail" class="panel">
@@ -260,8 +260,7 @@ function captionSlotHTML(slot){
 const text=captionShown[currentId]?.[slot]||'';
 return `<div class="field">
 <div class="fieldtop"><span class="label">CAPTION ${slot}</span><button class="copyone" onclick="copySlot(${slot})">📋 Copier</button></div>
-<div class="value cta-value caption-value" onclick="nextCaption(${slot})" title="Appuie pour choisir une autre caption complète">${esc(text)}</div>
-<div class="cta-hint">Caption commune à tous les profils. Appuie sur le texte pour en choisir une autre. Texte et retours à la ligne conservés.</div>
+<div class="value cta-value caption-value" onclick="nextCaption(${slot})">${esc(text)}</div>
 </div>`;
 }
 
@@ -270,14 +269,14 @@ const p=profiles.find(x=>x.id===currentId);
 if(!p)return;
 initSelections();
 document.getElementById('fields').innerHTML=
+(p.link?fieldHTML('link','LINK'):'')+
 `<div class="field">
 <div class="fieldtop"><span class="label">CTA</span><button class="copyone" onclick="copyCTA()">📋 Copier</button></div>
-<div class="value cta-value" onclick="nextCTA()" title="Appuie pour changer">${esc(ctaShown[currentId]||'')}</div>
-<div class="cta-hint">CTA commune à tous les profils.</div>
+<div class="value cta-value" onclick="nextCTA()">${esc(ctaShown[currentId]||'')}</div>
 </div>`+
-(p.link?fieldHTML('link','LINK'):'')+
-captionSlotHTML(1)+captionSlotHTML(2)+
-(p.follow?fieldHTML('follow','@FOLLOW'):'<div class="field"><div class="label">@FOLLOW</div><div class="value"></div></div>');
+(p.follow?fieldHTML('follow','@FOLLOW'):'<div class="field"><div class="label">@FOLLOW</div><div class="value"></div></div>')+
+captionSlotHTML(1)+
+captionSlotHTML(2);
 }
 
 async function copyText(s){
@@ -296,11 +295,15 @@ function copyAll(){
 const p=profiles.find(x=>x.id===currentId);
 if(!p)return;
 copyText([
-'CTA: '+(ctaShown[currentId]||''),
 ...(p.link?['LINK: '+p.link]:[]),
+'CTA: '+(ctaShown[currentId]||''),
+'@FOLLOW: '+(p.follow||''),
 'CAPTION 1: '+(captionShown[currentId]?.[1]||''),
 'CAPTION 2: '+(captionShown[currentId]?.[2]||''),
-'@FOLLOW: '+(p.follow||'')
+'PASSWORD: '+(p.password||''),
+'USERNAME: '+(p.user||''),
+'FULL NAME: '+(p.fullname||''),
+'BIO: '+(p.bio||'')
 ].join('\n\n'));
 }
 
@@ -349,6 +352,9 @@ if(!p)return;
 p.user=document.getElementById('edit_user').value.trim();
 p.link=document.getElementById('edit_link').value;
 p.follow=formatFollow(document.getElementById('edit_follow').value);
+p.password=document.getElementById('edit_password').value;
+p.fullname=document.getElementById('edit_fullname').value.trim();
+p.bio=document.getElementById('edit_bio').value;
 save();
 document.getElementById('detailTitle').textContent=p.user||'User sans nom';
 renderFields();
@@ -361,9 +367,12 @@ const p=profiles.find(x=>x.id===currentId),box=document.getElementById('editor')
 if(!p)return;
 if(!show){box.style.display='none';return;}
 box.innerHTML=
-`<div class="field"><div class="label">USER</div><textarea class="editarea" id="edit_user">${esc(p.user||'')}</textarea></div>`+
+`<div class="field"><div class="label">USERNAME</div><textarea class="editarea" id="edit_user">${esc(p.user||'')}</textarea></div>`+
+`<div class="field"><div class="label">FULL NAME</div><textarea class="editarea" id="edit_fullname">${esc(p.fullname||'')}</textarea></div>`+
+`<div class="field"><div class="label">PASSWORD</div><textarea class="editarea" id="edit_password">${esc(p.password||'')}</textarea></div>`+
+`<div class="field"><div class="label">BIO</div><textarea class="editarea" id="edit_bio" style="min-height:90px">${esc(p.bio||'')}</textarea></div>`+
 `<div class="field"><div class="label">LINK</div><textarea class="editarea" id="edit_link">${esc(p.link||'')}</textarea></div>`+
-`<div class="field"><div class="label">@FOLLOW</div><textarea class="editarea" id="edit_follow" placeholder="@username">${esc(p.follow||'')}</textarea><div class="cta-hint">Entre le @username : le texte sera automatiquement formaté en « Follow @username ».</div></div>`+
+`<div class="field"><div class="label">@FOLLOW</div><textarea class="editarea" id="edit_follow">${esc(p.follow||'')}</textarea></div>`+
 '<button class="primary" style="width:100%;margin-top:10px" onclick="saveProfileEdit()">Enregistrer le profil</button>';
 box.style.display='block';
 box.scrollIntoView({behavior:'smooth',block:'start'});
@@ -384,10 +393,13 @@ return String(s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'
 }
 
 function mapRow(row){
-const p={id:id(),user:'',link:'',follow:''};
+const p={id:id(),user:'',link:'',follow:'',password:'',fullname:'',bio:''};
 for(const [key,val] of Object.entries(row||{})){
 const n=normalizeKey(key),value=String(val??'');
 if(n==='user'||n==='username'||n==='compte')p.user=value.trim();
+else if(n==='fullname'||n==='nomcomplet'||n==='name')p.fullname=value.trim();
+else if(n==='password'||n==='pass'||n==='mdp')p.password=value;
+else if(n==='bio')p.bio=value;
 else if(n==='link')p.link=value;
 else if(n==='follow'||n==='followuser'||n==='atfollow')p.follow=formatFollow(value);
 else{
@@ -401,7 +413,12 @@ if(caption.trim()&&!globalCaptions.includes(caption))globalCaptions.push(caption
 }
 }
 }
-return p.user?p:null;
+if(p.user){
+if(!p.link)p.link='https://instagram.com/'+p.user.replace(/^@+/,'');
+if(!p.follow)p.follow='Follow @'+p.user.replace(/^@+/,'');
+return p;
+}
+return null;
 }
 
 async function importFile(file){
