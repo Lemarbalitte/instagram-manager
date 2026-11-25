@@ -198,7 +198,13 @@ function addUser(){
 const name=prompt('Nom du user Instagram (ex. @compte1) :');
 if(name===null)return;
 if(!name.trim()){alert('Entre un nom de compte.');return;}
-const p={id:id(),user:name.trim(),link:'',follow:''};
+const username = name.trim().replace(/^@+/, '');
+const p={
+  id:id(),
+  user:username,
+  link:'',
+  follow:'Follow @'+username
+};
 profiles.unshift(p);save();renderList();openProfile(p.id);
 }
 
