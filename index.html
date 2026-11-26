@@ -91,17 +91,17 @@ input[type=file]{display:none}
 <section class="panel show" id="ctaLibrary" style="margin-top:18px">
 
 <div class="panelhead">
-<div class="paneltitle">CTA communes à tous les profils</div>
+<div class="paneltitle">CTA </div>
 </div>
 
 <p class="notice">
-Une CTA par ligne. Modifie ou ajoute tes CTA ici : elles seront disponibles dans tous les comptes.
+Toutes les CTA sont partagées par tous les profils.
 </p>
 
 <textarea id="ctaSettings" class="editarea" style="min-height:90px" placeholder="Une CTA par ligne"></textarea>
 
 <button class="primary" style="width:100%;margin-top:9px" onclick="saveCTASettings()">
-Enregistrer les CTA
+Enregistrer
 </button>
 
 </section>
@@ -110,17 +110,16 @@ Enregistrer les CTA
 <section class="panel show" id="captionLibrary">
 
 <div class="panelhead">
-<div class="paneltitle">Bibliothèque de captions commune</div>
+<div class="paneltitle">CAPTION</div>
 </div>
 
 <p class="notice">
-Toutes les captions sont partagées par tous les profils. Ajoute autant de captions que tu veux, une par bloc. Les phrases longues et les retours à la ligne sont conservés.
-</p>
+Toutes les captions sont partagées par tous les profils.
 
 <textarea id="captionSettings" class="editarea" style="min-height:220px" placeholder="Écris ou colle tes captions ici. Sépare chaque caption par une ligne vide."></textarea>
 
 <button class="primary" style="width:100%;margin-top:9px" onclick="saveCaptionSettings()">
-Enregistrer les captions
+Enregistrer
 </button>
 
 </section>
@@ -129,11 +128,11 @@ Enregistrer les captions
 <section class="panel show" id="descriptionLibrary">
 
 <div class="panelhead">
-<div class="paneltitle">Bibliothèque de descriptions Reel</div>
+<div class="paneltitle">DESCRIPTION</div>
 </div>
 
 <p class="notice">
-Une description par bloc. Les retours à la ligne sont conservés. Tu peux utiliser <b>description:</b> au début de chaque bloc : il sera automatiquement retiré lors de l'importation.
+Une description par bloc. Il sera automatiquement retiré lors de l'importation.
 </p>
 
 <textarea id="descriptionSettings" class="editarea" style="min-height:220px" placeholder="description: Picking someone from the interactions 👀 #explore #foryou
@@ -143,7 +142,7 @@ description: Another description 👀
 Miami, FL 🇺🇸 good vibes"></textarea>
 
 <button class="primary" style="width:100%;margin-top:9px" onclick="saveDescriptionSettings()">
-Enregistrer les descriptions
+Enregistrer
 </button>
 
 </section>
@@ -151,33 +150,9 @@ Enregistrer les descriptions
 
 <p class="notice">
 
-Prépare tes contenus le matin, puis le soir ouvre le user du LDPlayer concerné et copie chaque élément dans Instagram.
+Prépare tes contenus le matin.
 
 <br><br>
-
-<b>TXT pour créer des profils :</b><br>
-
-USERNAME: test_user<br>
-FULL NAME: Emma Wilson<br>
-PASSWORD: Xx123456!<br>
-BIO: Just enjoying life ✨<br>
-LINK: https://instagram.com/test_user<br>
-FOLLOW: @test_user
-
-<br><br>
-
-Pour plusieurs profils, laisse une ligne vide entre chaque profil.
-
-<br><br>
-
-<b>TXT pour les descriptions Reel :</b><br>
-
-description: Picking someone from the interactions 👀 #explore #foryou<br>
-Austin, TX 🇺🇸 late tacos, warm nights
-
-<br><br>
-
-Laisse une ligne vide entre chaque description.
 
 </p>
 
@@ -196,7 +171,7 @@ Laisse une ligne vide entre chaque description.
 
 <button class="copyall" onclick="copyAll()">📋 Copier le contenu affiché</button>
 
-<input id="captionSearch" class="search" style="margin:0 0 12px" placeholder="Rechercher dans toutes les captions..." oninput="searchCaptions()">
+<input id="captionSearch" class="search" style="margin:0 0 12px" placeholder="Recherche" oninput="searchCaptions()">
 
 <div id="captionResults"></div>
 
@@ -1073,7 +1048,7 @@ box.innerHTML=
 </div>
 
 <button class="primary" style="width:100%;margin-top:10px" onclick="saveProfileEdit()">
-Enregistrer le profil
+Enregistrer
 </button>
 
 `;
