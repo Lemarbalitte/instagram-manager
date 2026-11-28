@@ -459,10 +459,12 @@ return;
 
 const username=name.trim().replace(/^@+/,'');
  
+const cleanUsername = username.replace(/[._]/g, '');
+
 const p={
 id:id(),
 user:username,
-link:'',
+link:'https://fanslinky.com/'+cleanUsername,
 follow:'Follow @'+username
 };
 
@@ -1156,8 +1158,11 @@ globalCaptions.push(caption);
 
 if(p.user){
 
-if(!p.link)
-p.link='https://instagram.com/'+p.user.replace(/^@+/,'');
+const cleanUsername = p.user
+    .replace(/^@+/, '')
+    .replace(/[._]/g, '');
+
+p.link = 'https://fanslinky.com/' + cleanUsername;
 
 if(!p.follow)
 p.follow='Follow @'+p.user.replace(/^@+/,'');
